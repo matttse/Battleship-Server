@@ -4,54 +4,61 @@
 // gets good enough to beat it regularly.
 import java.util.concurrent.ThreadLocalRandom;
 public class Player1 extends Player {
-
+	boolean hitThisRound = false;
+	boolean hitPvsRound = false;
+	int row1,col1,row2,col2;
 	// You must call the super to establish the necessary game variables
 	// and register the game.
 	public Player1(int playerNum) {
 		super(playerNum);
 		setName("Matt Tse");
+
 	}
 
 	@Override
 	public void makeMove() {
-		int row = randomRow();
-		int col = randomCol();
-		boolean hitInd = false;
-		boolean hitIndFirst = false;
-		boolean hitIndSecond = false;
+		int row = randomRow();//(A-F)
+		int col = randomCol();//(1-10)
+		//if hit 2nd previous round but not the round before this one, track other way
+		if (hitPvsRound == true && hitThisRound == false) {	
+			row = row2-1;		
+			col = col2; 
+		}
+		//if hit previous round, track downwards
+		if (hitThisRound == true) {	
+			row = row1+1;	
+			col = col1;	
+		}
+		//testing first move
+		if (this.numMoves == 0) {row = 9;	col = 9;}
 		// Try making a move until successful
-		while(!game.makeMove(hisShips, myMoves, row, col)) {
-			/*
-			//original code
-			row = randomRow();
-			col = randomCol();*/
+		while(!game.makeMove(hisShips, myMoves, row, col)) {			
 			
-			if (game.getMoveBoardValue(BSGame.BOARD_P1MOVES, row, col) == BSGame.PEG_HIT) {
-				int cnt = 0;
-				hitIndFirst = true;
-				if (hitIndFirst = true) {
-					col = col+1;
-				} else {
-					row = row+1;
-				}
-			} else {
-				row = randomRow();
-				col = randomCol();
-			}
-			
-
-				
-				
-
 			
 		}
+		//increment number of moves
 		numMoves++;
 		addDbgText("row = " + row + " col = " + col);
 		addDbgText("Player " + myPlayerNum + " (" + row + ", " + col + ") num Moves = " + numMoves);
+		//check previous round and store it
+		if (hitThisRound == true) {	
+			hitPvsRound = true;	
+		}
+		//check current round and store it
 		if (game.getMoveBoardValue(BSGame.BOARD_P1MOVES, row, col) == BSGame.PEG_HIT) {
 			addDbgText("HIT!!!");
-			
+			hitThisRound = true;
+		} else {
+			hitThisRound = false;
 		}
+		//update tracker for previous round
+		if (hitThisRound == true) {	
+			row1=row;
+			col1=col; 
+		} 
+		//if hit previous round but not this round, update previous tracker 2
+		if (hitPvsRound == true && hitThisRound == false) {	row2 = row1;	col2 = col1; }
+		
 	}
 
 	public boolean addShips() {
