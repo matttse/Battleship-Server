@@ -3,10 +3,13 @@
 // as a base to expand upon. It is a good idea to play against this player until yours
 // gets good enough to beat it regularly.
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.*;
+
 public class Player1 extends Player {
 	boolean hitThisRound = false;
 	boolean hitPvsRound = false;
 	int row1,col1,row2,col2;
+	Map<String, ArrayList<String>> moveList = new HashMap<String, ArrayList<String>>();
 	// You must call the super to establish the necessary game variables
 	// and register the game.
 	public Player1(int playerNum) {
@@ -19,10 +22,15 @@ public class Player1 extends Player {
 	public void makeMove() {
 		int row = randomRow();//(A-F)
 		int col = randomCol();//(1-10)
+		ArrayList<String> move = null;
 		//if hit 2nd previous round but not the round before this one, track other way
 		if (hitPvsRound == true && hitThisRound == false) {	
 			row = row2-1;		
 			col = col2; 
+		}
+		if (hitPvsRound == true && hitPvsRound == true) {
+			row = row1-2;
+			col = col1;
 		}
 		//if hit previous round, track downwards
 		if (hitThisRound == true) {	
@@ -32,8 +40,10 @@ public class Player1 extends Player {
 		//testing first move
 		if (this.numMoves == 0) {row = 9;	col = 9;}
 		// Try making a move until successful
-		while(!game.makeMove(hisShips, myMoves, row, col)) {			
-			
+		while(!game.makeMove(hisShips, myMoves, row, col)) {
+			move.add(String.valueOf(row));
+			move.add(String.valueOf(col));
+			moveList.put(String.valueOf(numMoves), move);
 			
 		}
 		//increment number of moves
@@ -57,7 +67,10 @@ public class Player1 extends Player {
 			col1=col; 
 		} 
 		//if hit previous round but not this round, update previous tracker 2
-		if (hitPvsRound == true && hitThisRound == false) {	row2 = row1;	col2 = col1; }
+		if (hitPvsRound == true && hitThisRound == false) {
+			row2 = row1;	
+			col2 = col1; 
+		}
 		
 	}
 
