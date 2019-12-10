@@ -206,6 +206,8 @@ public class Player1 extends Player {
 		//not starting move
 		int previousMove = this.numMoves-1;
 		int secondPreviousMove = previousMove-1;
+		int checkRow;
+		int checkCol;
 
 		if (this.numMoves > 0) {
 			//restore previous round values
@@ -231,39 +233,39 @@ public class Player1 extends Player {
 
 					col = col1+1;
 					row = row1;
-
-					if ((col==10&&row==10)||(col==1&&col==1)||(col==1&&col==10)||(col==10&&col==1)) {
-						col = randomCol();
-						row = randomRow();
-					}
 					
 					
 				}
 				if (hitTracking.get(previousMove) == false && hitTracking.get(secondPreviousMove) == true) {
-					if ((col==10&&row==10)||(col==1&&col==1)||(col==1&&col==10)||(col==10&&col==1)) {
-						col = randomCol();
-						row = randomRow();
-					} else {
-						int shipSize = 0;
-						for (int i = 0; i < hitTracking.size(); i++) {
-							if (hitTracking.get(i) == true) {
-								shipSize+=1;
-							}
+					
+					int shipSize = 0;
+					for (int i = 0; i < hitTracking.size(); i++) {
+						if (hitTracking.get(i) == true) {
+							shipSize+=1;
 						}
-						col=col1-(shipSize+1);
-						row=row2;						
 					}
+					col=col1-(shipSize+1);
+					row=row2;						
+				
 
 				}
 				if (hitTracking.get(previousMove) == true && hitTracking.get(secondPreviousMove) == false) {
-					if ((col==10&&row==10)||(col==1&&col==1)||(col==1&&col==10)||(col==10&&col==1)) {
-						col = randomCol();
-						row = randomRow();
-					} else {
-						col=col2+1;
-						row=row2;						
-					}
+					
+					col=col2+1;
+					row=row2;						
+					
 				}
+				
+				//loop through move list to ensure current move is valid, if not reroll random				
+				for (int i = 0; i < moveList.size(); i++) {
+					checkRow = Integer.valueOf(String.valueOf(this.moveList.get(String.valueOf(i))+10).substring(0, 1));
+					checkCol = Integer.valueOf(String.valueOf(this.moveList.get(String.valueOf(i))+10).substring(1, 2));
+					if (row == checkRow &&	col == checkCol) {
+						row = randomCol();
+						col = randomRow();
+					}
+					
+				}	
 			} else 
 			if (hitTracking.get(previousMove) == true) {
 				col = col1+1;
@@ -294,9 +296,11 @@ public class Player1 extends Player {
 				
 				//if hit previous round y axis and hit previous previous round y axis and next digit is < than 10 and > 1
 				//increment row variable
-				
+			
 				
 		}
+		
+
 		//if first move	
 		if (this.numMoves == 0) {
 			row = 5;	
