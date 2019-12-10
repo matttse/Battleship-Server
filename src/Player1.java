@@ -228,9 +228,14 @@ public class Player1 extends Player {
 				//increment one that is not the same
 				if (hitTracking.get(previousMove) == true && hitTracking.get(secondPreviousMove) == true) {
 					//if previous row hit and previous col hit, track right
-				
+
 					col = col1+1;
 					row = row1;
+
+					if ((col==10&&row==10)||(col==1&&col==1)||(col==1&&col==10)||(col==10&&col==1)) {
+						col = randomCol();
+						row = randomRow();
+					}
 					
 					
 				}
