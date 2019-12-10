@@ -239,9 +239,30 @@ public class Player1 extends Player {
 					
 					
 				}
+				if (hitTracking.get(previousMove) == false && hitTracking.get(secondPreviousMove) == true) {
+					if ((col==10&&row==10)||(col==1&&col==1)||(col==1&&col==10)||(col==10&&col==1)) {
+						col = randomCol();
+						row = randomRow();
+					} else {
+						int shipSize = 0;
+						for (int i = 0; i < hitTracking.size(); i++) {
+							if (hitTracking.get(i) == true) {
+								shipSize+=1;
+							}
+						}
+						col=col1-(shipSize+1);
+						row=row2;						
+					}
+
+				}
 				if (hitTracking.get(previousMove) == true && hitTracking.get(secondPreviousMove) == false) {
-					col=col2+1;
-					row=row2;
+					if ((col==10&&row==10)||(col==1&&col==1)||(col==1&&col==10)||(col==10&&col==1)) {
+						col = randomCol();
+						row = randomRow();
+					} else {
+						col=col2+1;
+						row=row2;						
+					}
 				}
 			} else 
 			if (hitTracking.get(previousMove) == true) {
