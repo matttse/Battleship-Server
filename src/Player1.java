@@ -239,9 +239,13 @@ public class Player1 extends Player {
 				if (hitTracking.get(previousMove) == false && hitTracking.get(secondPreviousMove) == true) {
 					
 					int shipSize = 0;
-					for (int i = 0; i < hitTracking.size(); i++) {
-						if (hitTracking.get(i) == true) {
+					
+					for (int i = hitTracking.size()-1; i >= 0; i--) {
+						
+						if (i>0&&hitTracking.get(i-1) == true) {
 							shipSize+=1;
+						} else if (i == 0 || hitTracking.get(i-1) == false) {
+							break;
 						}
 					}
 					col=col1-(shipSize+1);
@@ -251,8 +255,8 @@ public class Player1 extends Player {
 				}
 				if (hitTracking.get(previousMove) == true && hitTracking.get(secondPreviousMove) == false) {
 					
-					col=col2+1;
-					row=row2;						
+					col=col1;
+					row=row1+1;						
 					
 				}
 				
