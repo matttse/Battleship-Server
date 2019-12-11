@@ -12,7 +12,6 @@ public class Player1 extends Player {
 //	int row1,col1,row2,col2;
 	int[][] trackingGrid = new int[10][10];
 	Map<String, Integer> moveList = new HashMap<String, Integer>();
-	public static final int[][] shipSize = {{ 2, 1 }, { 3, 1 }, { 3, 1 },{ 4, 1 }, { 5, 1 }};
 	public static int[][] gridState = new int[10][10];
 	public static boolean[] shipSank = new boolean[5];
 	public static int[][] kGrid;
@@ -25,177 +24,6 @@ public class Player1 extends Player {
 
 	}
 
-	public void hunt(){
-		
-		//declare array
-		double[][] prob = new double[9][9];
-		
-		//Array Initialization
-		for (int i = 0; i < 10; i++)
-			for (int j = 0; j < 10; j++)
-				prob[i][j] = 0;
-		
-		/*
-		 * 	Goes through each cell, and then iterates through all the possible
-		 * 	ship placements. Then increments 1 for the possible locations, forming
-		 * 	the final ship probability grid.
-		 */
-		for (int cX = 0; cX < 10; cX++){
-			for (int cY = 0; cY < 10; cY++){
-				
-				for (int p = 0; p < 5; p++){
-					//horizontal placement
-					int lX = cX + shipSize[p][0] - 1, 
-							lY = cY + shipSize[p][1] - 1;
-					
-					//check boundaries
-					if (lX >= 10 || lY >= 10) continue;
-					
-					//check if the selected area is occupied or not
-					boolean areaOccupied = false;
-
-					for (int i = cX; i <= lX; i++)
-						if (gridState[i][cY] != 0)
-							areaOccupied = true;
-					
-					if (areaOccupied) continue;
-					
-					// add probability if the area has never been fired
-					for (int i = cX; i <= lX; i++)
-						prob[i][cY] += 1;
-				}
-				
-				//vertical placement
-				for (int p = 0; p < 5; p++){
-					int lX = cX + shipSize[p][1] - 1, 
-							lY = cY + shipSize[p][0] - 1;
-					
-					//check boundaries
-					if (lX >= 10 || lY >= 10) continue;
-					
-					//check if the selected area is occupied or not
-					boolean areaOccupied = false;
-					
-					for (int i = cY; i <= lY; i++)
-						if (gridState[cX][i] != 0)
-							areaOccupied = true;
-					
-					if (areaOccupied) continue;
-					
-					// add probability if the area has never been fired
-					for (int i = cY; i <= lY; i++)
-						prob[cX][i] += 1;
-				}
-				
-			}			
-			
-		}
-	
-	}
-
-		
-	public void target(){
-		
-		kGrid = (int[][])gridState.clone();
-		
-		double[][] prob = new double[10][10];
-		
-		//Array Initialization
-		for (int i = 0; i < 10; i++)
-			for (int j = 0; j < 10; j++)
-				prob[i][j] = 0;
-		
-		/*
-		 * 	Goes through each cell, and then iterates through all the possible
-		 * 	ship placements. Then increments 1 for the possible locations, forming
-		 * 	the final ship probability grid.
-		 */
-		
-		// loop through all the points
-		for (int cX = 0; cX < 10; cX++){
-			for (int cY = 0; cY < 10; cY++){
-				
-				
-				for (int p = 0; p < 5; p++){
-					if (!shipSank[p]){// if the ship has not been sank
-						
-						//horizontal placement
-						int lX = cX + shipSize[p][0] - 1, 
-								lY = cY + shipSize[p][1] - 1;
-						
-						//check out of bound
-						if (lX >= 10 || lY >= 10) continue;
-						
-						//declare boolean conditions to determine if the grid probability is viable
-						boolean hitIncluded = false;
-						boolean missIncluded = false;
-						
-						int nHitIncluded = 0;
-						
-						//check if the selected area has successful hit on the ship
-						for (int i = cX; i <= lX; i++){
-							if (kGrid[i][cY] == 1){
-								hitIncluded = true;
-								nHitIncluded += 1;
-							}
-							
-						//check if the selected area has previous miss or sank ship
-							if (kGrid[i][cY] == 2 || kGrid[i][cY] == 3){
-								missIncluded = true;
-								break;
-							}
-						}
-						
-						
-						if (!hitIncluded || missIncluded) continue;
-						
-						// if the selected area contains successful hit on the ship but not previous hit or sank, then update
-						for (int i = cX; i <= lX; i++)
-							prob[i][cY] += nHitIncluded;
-					}
-				}
-				
-				for (int p = 0; p < 5; p++){
-					if (!shipSank[p]){
-						//vertical placement
-						int lX = cX + shipSize[p][1] - 1, 
-								lY = cY + shipSize[p][0] - 1;
-						
-						if (lX >= 10 || lY >= 10) continue;
-						
-						//declare boolean conditions to determine if the grid probability is viable
-						boolean hitIncluded = false;
-						boolean missIncluded = false;
-						
-						int nHitIncluded = 0;
-						
-						//check if the selected area has successful hit on the ship
-						for (int i = cY; i <= lY; i++){
-							if (kGrid[cX][i] == 1){
-								hitIncluded = true;
-								nHitIncluded += 1;
-							}
-							
-							//check if the selected area has previous miss or sank ship
-							if (kGrid[cX][i] == 2 || kGrid[cX][i] == 3){
-								missIncluded = true;
-								break;
-							}
-						}
-						
-						if ((!hitIncluded) || missIncluded) continue;
-						// if the selected area contains successful hit on the ship but not previous hit or sank, then update
-						for (int i = cY; i <= lY; i++)
-							prob[cX][i] += nHitIncluded;
-					}
-				}				
-			}
-			
-		}
-	}
-		
-	
-
 	
 	public void makeMove() {
 		int row = randomRow();//(A-F) y axis
@@ -206,12 +34,16 @@ public class Player1 extends Player {
 		//not starting move
 		int previousMove = this.numMoves-1;
 		int secondPreviousMove = previousMove-1;
+		int thirdPreviousMove = secondPreviousMove-1;
+		int fourthPreviousMove = thirdPreviousMove-1;
+		int fifthPreviousMove = fourthPreviousMove-1;
 		int checkRow;
 		int checkCol;
 
 		if (this.numMoves > 0) {
 			//restore previous round values
 			tempTrack = this.moveList.get(String.valueOf(numMoves-1))+10;
+			@SuppressWarnings("unused")
 			boolean trackPreviousMove = hitTracking.get(previousMove);
 
 			if (tempTrack == 110) {
@@ -223,6 +55,7 @@ public class Player1 extends Player {
 			}
 			
 			if (this.numMoves > 1) {
+				@SuppressWarnings("unused")
 				boolean trackSecondPreviousMove = hitTracking.get(secondPreviousMove);
 				//if true true
 				//read 2 previous coordinates
@@ -249,8 +82,9 @@ public class Player1 extends Player {
 						}
 					}
 					
-					col=col1-(shipSize+1);
-					row=row2;						
+					col=col2-(shipSize+1);
+					row=row2;
+					col2=col;
 				
 
 				}
@@ -260,17 +94,64 @@ public class Player1 extends Player {
 					row=row1;						
 					
 				}
-				
-				/*//loop through move list to ensure current move is valid, if not reroll random				
-				for (int i = 0; i < moveList.size(); i++) {
-					checkRow = Integer.valueOf(String.valueOf(this.moveList.get(String.valueOf(i))+10).substring(0, 1));
-					checkCol = Integer.valueOf(String.valueOf(this.moveList.get(String.valueOf(i))+10).substring(1, 2));
-					if ((row == checkRow &&	col == checkCol)||(col>10)||(col<1)||(row>10)||(row<1)) {
-						row = randomCol();
-						col = randomRow();
+				if (this.numMoves > 2 ) {
+					@SuppressWarnings("unused")
+					boolean trackThirdPreviousMove = hitTracking.get(thirdPreviousMove);
+					//if hit previous round false and hit previous previous round false and hit previous previous previous round true
+					//must try vertical down
+					//increment row variable
+					if (hitTracking.get(previousMove) == false && hitTracking.get(secondPreviousMove) == false && hitTracking.get(thirdPreviousMove) == true) {
+						col=col2+1;
+						row=row2+1;
 					}
 					
-				}	*/
+					if (this.numMoves > 3) {
+						@SuppressWarnings("unused")
+						boolean trackFourthPreviousMove = hitTracking.get(fourthPreviousMove);
+						//if hit previous round false and hit previous previous round false and
+						//hit previous previous previous round false but hit 4th previous round
+						//must try vertical up
+						//increment row variable
+						if (hitTracking.get(previousMove) == false && hitTracking.get(secondPreviousMove) == false
+								&& hitTracking.get(thirdPreviousMove) == false && hitTracking.get(fourthPreviousMove) == true) {
+							int shipSize = 0;
+							
+							for (int i = hitTracking.size()-3; i >= 0; i--) {
+								
+								if (i>0&&hitTracking.get(i-1) == true) {
+									shipSize+=1;
+								} else if (i == 0 || hitTracking.get(i-1) == false) {
+									break;
+								}
+							}
+							
+							col=col2;
+							row=row2-(shipSize+2);
+						}
+						if (hitTracking.get(previousMove) == false && hitTracking.get(secondPreviousMove) == false
+								&& hitTracking.get(thirdPreviousMove) == true && hitTracking.get(fourthPreviousMove) == false) {
+							int shipSize = 0;
+							
+							for (int i = hitTracking.size()-4; i >= 0; i--) {
+								
+								if (i>0 && mod(i, 3) && hitTracking.get(i-1) == true) {
+									shipSize+=1;
+								} else if (i == 0 || hitTracking.get(i-1) == false) {
+									break;
+								}
+							}
+							
+							col=col1+1;
+							row=row1-(shipSize+1);
+							
+						}
+
+
+					}
+
+				}
+				
+				
 				//loop through move list to ensure current move is valid, if not reroll random				
 				for (int i = 0; i < moveList.size(); i++) {
 					checkRow = Integer.valueOf(String.valueOf(this.moveList.get(String.valueOf(i))+10).substring(0, 1));
@@ -283,37 +164,12 @@ public class Player1 extends Player {
 					
 				}	
 				
-			} else 
+			} else //if hit previous
+				//increment col variable
 			if (hitTracking.get(previousMove) == true) {
 				col = col1+1;
 				row = row1;
-			}
-			
-			
-//					 //previous hit and previous previous hit was false
-//					//move random
-//					if (hitTracking.get(numMoves) == false && hitTracking.get(numMoves-1) == false) {
-//						row = randomRow();
-//						col = randomCol();
-//									
-//
-//					}
-//					//if hit previous round and not hit previous previous round
-//					if (hitTracking.get(numMoves) == true && hitTracking.get(numMoves-1) == false) {
-//						if (col < 10) {
-//							col=col+1;//increment horizontally	
-//						} else {
-//							col=col-1;
-//						}
-//						
-//					}
-				//if hit previous round x axis and hit previous previous round x axis and next digit is < than 10 and > 1
-				//increment col variable
-
-				
-				//if hit previous round y axis and hit previous previous round y axis and next digit is < than 10 and > 1
-				//increment row variable
-			
+			}		
 				
 		}
 		
@@ -353,8 +209,14 @@ public class Player1 extends Player {
 		
 		
 	}
-	public void checkCoordinate(int row,int col) {
-		
+	public static boolean mod(int a, int b){
+	    if ( a < 0 ){
+	        return false;
+	    }else if (a==b){ 
+	        return true;
+	    }else{ 
+	        return mod( a-b, b );
+	    }
 	}
 	public boolean addShips() {
 		int carrierY = ThreadLocalRandom.current().nextInt(9, 10);
