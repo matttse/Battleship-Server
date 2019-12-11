@@ -16,6 +16,7 @@ public class Player1 extends Player {
 	public static int[][] gridState = new int[10][10];
 	public static boolean[] shipSank = new boolean[5];
 	public static int[][] kGrid;
+	public boolean checkCoordinateExistsStatus = true;
 	Integer tempTrack,row1,col1,row2,col2;
 	// You must call the super to establish the necessary game variables
 	// and register the game.
@@ -248,6 +249,7 @@ public class Player1 extends Player {
 							break;
 						}
 					}
+					
 					col=col1-(shipSize+1);
 					row=row2;						
 				
@@ -255,21 +257,23 @@ public class Player1 extends Player {
 				}
 				if (hitTracking.get(previousMove) == true && hitTracking.get(secondPreviousMove) == false) {
 					
-					col=col1;
-					row=row1+1;						
+					col=col1+1;
+					row=row1;						
 					
 				}
 				
-				//loop through move list to ensure current move is valid, if not reroll random				
-				for (int i = 0; i < moveList.size(); i++) {
-					checkRow = Integer.valueOf(String.valueOf(this.moveList.get(String.valueOf(i))+10).substring(0, 1));
-					checkCol = Integer.valueOf(String.valueOf(this.moveList.get(String.valueOf(i))+10).substring(1, 2));
-					if (row == checkRow &&	col == checkCol) {
-						row = randomCol();
-						col = randomRow();
-					}
+				//loop through move list to ensure current move is valid, if not reroll random
+				while (checkCoordinateExistsStatus == true) {
+					int cnt = 0;
+					cnt++;
+					checkRow = Integer.valueOf(String.valueOf(this.moveList.get(String.valueOf(cnt))+10).substring(0, 1));
+					checkCol = Integer.valueOf(String.valueOf(this.moveList.get(String.valueOf(cnt))+10).substring(1, 2));
+					checkCoordinateExistsStatus = checkCoordinateExists(checkRow, checkCol, row, col);
+					row = randomCol();
+					col = randomRow();
 					
-				}	
+				}
+				
 			} else 
 			if (hitTracking.get(previousMove) == true) {
 				col = col1+1;
@@ -340,7 +344,20 @@ public class Player1 extends Player {
 		
 		
 	}
-
+	public boolean checkCoordinateExists(int checkRow,int checkCol, int row,int col) {
+		boolean status = true;
+		//loop through move list to ensure current move is valid, if not reroll random				
+		for (int i = 0; i < moveList.size(); i++) {
+			
+			if (!((row == checkRow && col == checkCol)||(col>10)||(col<1)||(row>10)||(row<1))) {
+				status = false;
+			}
+			
+		}
+		
+		return status;
+		
+	}
 	public boolean addShips() {
 		int carrierY = ThreadLocalRandom.current().nextInt(9, 10);
 		int subY = ThreadLocalRandom.current().nextInt(6, 8);
