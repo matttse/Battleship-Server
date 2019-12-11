@@ -16,7 +16,6 @@ public class Player1 extends Player {
 	public static int[][] gridState = new int[10][10];
 	public static boolean[] shipSank = new boolean[5];
 	public static int[][] kGrid;
-	public boolean checkCoordinateExistsStatus = true;
 	Integer tempTrack,row1,col1,row2,col2;
 	// You must call the super to establish the necessary game variables
 	// and register the game.
@@ -262,17 +261,27 @@ public class Player1 extends Player {
 					
 				}
 				
-				//loop through move list to ensure current move is valid, if not reroll random
-				while (checkCoordinateExistsStatus == true) {
-					int cnt = 0;
-					cnt++;
-					checkRow = Integer.valueOf(String.valueOf(this.moveList.get(String.valueOf(cnt))+10).substring(0, 1));
-					checkCol = Integer.valueOf(String.valueOf(this.moveList.get(String.valueOf(cnt))+10).substring(1, 2));
-					checkCoordinateExistsStatus = checkCoordinateExists(checkRow, checkCol, row, col);
-					row = randomCol();
-					col = randomRow();
+				/*//loop through move list to ensure current move is valid, if not reroll random				
+				for (int i = 0; i < moveList.size(); i++) {
+					checkRow = Integer.valueOf(String.valueOf(this.moveList.get(String.valueOf(i))+10).substring(0, 1));
+					checkCol = Integer.valueOf(String.valueOf(this.moveList.get(String.valueOf(i))+10).substring(1, 2));
+					if ((row == checkRow &&	col == checkCol)||(col>10)||(col<1)||(row>10)||(row<1)) {
+						row = randomCol();
+						col = randomRow();
+					}
 					
-				}
+				}	*/
+				//loop through move list to ensure current move is valid, if not reroll random				
+				for (int i = 0; i < moveList.size(); i++) {
+					checkRow = Integer.valueOf(String.valueOf(this.moveList.get(String.valueOf(i))+10).substring(0, 1));
+					checkCol = Integer.valueOf(String.valueOf(this.moveList.get(String.valueOf(i))+10).substring(1, 2));
+					if ((row == checkRow &&	col == checkCol)||(col>10)||(col<1)||(row>10)||(row<1)) {
+						row = randomCol();
+						col = randomRow();
+						i = 0;
+					}
+					
+				}	
 				
 			} else 
 			if (hitTracking.get(previousMove) == true) {
@@ -344,18 +353,7 @@ public class Player1 extends Player {
 		
 		
 	}
-	public boolean checkCoordinateExists(int checkRow,int checkCol, int row,int col) {
-		boolean status = true;
-		//loop through move list to ensure current move is valid, if not reroll random				
-		for (int i = 0; i < moveList.size(); i++) {
-			
-			if (!((row == checkRow && col == checkCol)||(col>10)||(col<1)||(row>10)||(row<1))) {
-				status = false;
-			}
-			
-		}
-		
-		return status;
+	public void checkCoordinate(int row,int col) {
 		
 	}
 	public boolean addShips() {
