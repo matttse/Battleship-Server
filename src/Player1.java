@@ -151,25 +151,23 @@ public class Player1 extends Player {
 
 				}
 				
-				
-				//loop through move list to ensure current move is valid, if not reroll random				
-				for (int i = 0; i < moveList.size(); i++) {
-					checkRow = Integer.valueOf(String.valueOf(this.moveList.get(String.valueOf(i))+10).substring(0, 1));
-					checkCol = Integer.valueOf(String.valueOf(this.moveList.get(String.valueOf(i))+10).substring(1, 2));
-					if ((row == checkRow &&	col == checkCol)||(col>10)||(col<1)||(row>10)||(row<1)) {
-						row = randomCol();
-						col = randomRow();
-						i = 0;
-					}
-					
-				}	
-				
 			} else //if hit previous
 				//increment col variable
 			if (hitTracking.get(previousMove) == true) {
 				col = col1+1;
 				row = row1;
-			}		
+			}
+			//loop through move list to ensure current move is valid, if not reroll random				
+			for (int i = 0; i < moveList.size(); i++) {
+				checkRow = Integer.valueOf(String.valueOf(this.moveList.get(String.valueOf(i))+10).substring(0, 1));
+				checkCol = Integer.valueOf(String.valueOf(this.moveList.get(String.valueOf(i))+10).substring(1, 2));
+				if ((row == checkRow &&	col == checkCol)||(col>10)||(col<1)||(row>10)||(row<1)) {
+					row = randomCol();
+					col = randomRow();
+					i = 0;
+				}
+				
+			}	
 				
 		}
 		
